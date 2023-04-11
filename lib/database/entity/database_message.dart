@@ -11,10 +11,11 @@ class DatabaseMessage {
   final String author;
   final String timestamp;
   final String recipientClientId;
+  final bool isUnread;
 
-  const DatabaseMessage({this.primaryKey, required this.content, required this.author, required this.timestamp, required this.recipientClientId});
+  const DatabaseMessage({this.primaryKey, required this.content, required this.author, required this.timestamp, required this.recipientClientId, required this.isUnread});
 
   Message toDomainModel() {
-    return Message(content: content, time: timestamp, recipientClientId: recipientClientId, author: author);
+    return Message(content: content, time: timestamp, recipientClientId: recipientClientId, author: author, isUnread: isUnread);
   }
 }
