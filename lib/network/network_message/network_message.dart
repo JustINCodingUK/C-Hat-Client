@@ -22,7 +22,8 @@ extension NetworkMessageUtils on NetworkMessage {
       content: content, 
       time: timestamp, 
       recipientClientId: recipientClientId, 
-      author: author
+      author: author,
+      isUnread: true
     );
   }
 
