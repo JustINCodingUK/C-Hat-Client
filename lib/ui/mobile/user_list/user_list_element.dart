@@ -89,7 +89,7 @@ class _UserListElementState extends State<UserListElement> {
                             return current is NumberOfUnreadMessagesReceived;
                           },
                           builder: (context, state) {
-                            if(state is NumberOfUnreadMessagesReceived) {
+                            if(state is NumberOfUnreadMessagesReceived && state.numberOfUnreadMessages != 0) {
                               if(state.clientId == widget.user.clientId) {
                                 widget._unreadMessages = state.numberOfUnreadMessages;
                               }
