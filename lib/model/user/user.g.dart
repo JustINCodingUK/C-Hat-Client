@@ -27,7 +27,7 @@ class User {
       return false;
     }
   }
-  
+
   User copy({String? username, String? clientId}) {
     return User(
         username: username ?? this.username,

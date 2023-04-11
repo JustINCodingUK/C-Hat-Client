@@ -89,7 +89,7 @@ class _$ChatDatabase extends ChatDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `messages` (`primaryKey` INTEGER PRIMARY KEY AUTOINCREMENT, `content` TEXT NOT NULL, `author` TEXT NOT NULL, `timestamp` TEXT NOT NULL, `recipientClientId` TEXT NOT NULL)');
+            'CREATE TABLE IF NOT EXISTS `messages` (`primaryKey` INTEGER PRIMARY KEY AUTOINCREMENT, `content` TEXT NOT NULL, `author` TEXT NOT NULL, `timestamp` TEXT NOT NULL, `recipientClientId` TEXT NOT NULL, `isUnread` INTEGER NOT NULL)');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `users` (`clientId` TEXT NOT NULL, `username` TEXT NOT NULL, PRIMARY KEY (`clientId`))');
 
@@ -123,7 +123,8 @@ class _$MessageDao extends MessageDao {
                   'content': item.content,
                   'author': item.author,
                   'timestamp': item.timestamp,
-                  'recipientClientId': item.recipientClientId
+                  'recipientClientId': item.recipientClientId,
+                  'isUnread': item.isUnread ? 1 : 0
                 }),
         _databaseMessageDeletionAdapter = DeletionAdapter(
             database,
@@ -134,7 +135,8 @@ class _$MessageDao extends MessageDao {
                   'content': item.content,
                   'author': item.author,
                   'timestamp': item.timestamp,
-                  'recipientClientId': item.recipientClientId
+                  'recipientClientId': item.recipientClientId,
+                  'isUnread': item.isUnread ? 1 : 0
                 });
 
   final sqflite.DatabaseExecutor database;
@@ -157,7 +159,8 @@ class _$MessageDao extends MessageDao {
             content: row['content'] as String,
             author: row['author'] as String,
             timestamp: row['timestamp'] as String,
-            recipientClientId: row['recipientClientId'] as String),
+            recipientClientId: row['recipientClientId'] as String,
+            isUnread: (row['isUnread'] as int) != 0),
         arguments: [clientId]);
   }
 
@@ -171,7 +174,23 @@ class _$MessageDao extends MessageDao {
             content: row['content'] as String,
             author: row['author'] as String,
             timestamp: row['timestamp'] as String,
-            recipientClientId: row['recipientClientId'] as String),
+            recipientClientId: row['recipientClientId'] as String,
+            isUnread: (row['isUnread'] as int) != 0),
+        arguments: [clientId]);
+  }
+
+  @override
+  Future<int?> getNumberOfUnreadMessagesByUser(String clientId) async {
+    return _queryAdapter.query(
+        'SELECT COUNT(recipientClientId) FROM messages WHERE isUnread = TRUE AND recipientClientId = ?1',
+        mapper: (Map<String, Object?> row) => row.values.first as int,
+        arguments: [clientId]);
+  }
+
+  @override
+  Future<void> markUnreadAsReadOfUser(String clientId) async {
+    await _queryAdapter.queryNoReturn(
+        'UPDATE messages SET isUnread = FALSE WHERE isUnread = TRUE AND recipientClientId = ?1',
         arguments: [clientId]);
   }
 

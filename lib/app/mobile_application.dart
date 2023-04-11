@@ -2,9 +2,9 @@ import 'package:c_hat/app/bloc/app_bloc.dart';
 import 'package:c_hat/app/bloc/app_event.dart';
 import 'package:c_hat/app/bloc/app_state.dart';
 import 'package:c_hat/ui/mobile/user_list/user_list_widget.dart';
-import 'package:c_hat/ui/shared/chat_bloc/chat_widget_bloc.dart';
-import 'package:c_hat/ui/shared/chat_bloc/chat_widget_event.dart';
-import 'package:c_hat/ui/shared/chat_bloc/chat_widget_state.dart';
+import 'package:c_hat/ui/shared/chat_bloc/chat_bloc.dart';
+import 'package:c_hat/ui/shared/chat_bloc/chat_event.dart';
+import 'package:c_hat/ui/shared/chat_bloc/chat_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -53,24 +53,24 @@ class MobileApplication extends StatelessWidget {
             child: CircularProgressIndicator(),
           );
         } else if (state is UserIsLoggedIn) {
-          final chatBloc = ChatWidgetBloc(value: MessageIdleState())
-            ..add(InitiateConnectionEvent(
+          context.read<ChatBloc>()
+            .add(InitiateConnectionEvent(
                 mailId: state.mailId,
                 wsUrl: state.wsUrl,
                 password: state.password));
 
-          return BlocProvider<ChatWidgetBloc>(
-            create: (_) => chatBloc,
-            child: BlocBuilder<ChatWidgetBloc, ChatState>(
-              builder: ((chatContext, state) {
-                if (state is LoginSuccess) {
-                  return UserListRoute(platform, chatBloc,
-                      loggedInUser: state.user);
-                } else {
-                  return const Center(child: CircularProgressIndicator());
-                }
-              }),
-            ),
+          return BlocBuilder<ChatBloc, ChatState>(
+            buildWhen: (previous, current) {
+              return current is LoginSuccess || current is LoginFailed;
+            },
+            builder: ((chatContext, state) {
+              if (state is LoginSuccess) {
+                return UserListRoute(platform,
+                    loggedInUser: state.user);
+              } else {
+                return const Center(child: CircularProgressIndicator());
+              }
+            }),
           );
         } else {
           return LoginRoute(platform);

@@ -19,4 +19,10 @@ abstract class MessageDao {
   @Query("SELECT TOP 1 * FROM messages WHERE recipientClientId = :clientId")
   Future<DatabaseMessage?> getLatestMessageByUserClientId(String clientId);
 
+  @Query("SELECT COUNT(recipientClientId) FROM messages WHERE isUnread = TRUE AND recipientClientId = :clientId")
+  Future<int?> getNumberOfUnreadMessagesByUser(String clientId);
+
+  @Query("UPDATE messages SET isUnread = FALSE WHERE isUnread = TRUE AND recipientClientId = :clientId")
+  Future<void> markUnreadAsReadOfUser(String clientId);
+
 }
