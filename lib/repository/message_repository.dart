@@ -52,5 +52,13 @@ class MessageRepository {
     return message!.toDomainModel();
   }
 
+  Future<int> getNumberOfUnreadMessagesByUser(String clientId) async {
+    final number = await _database.messageDao.getNumberOfUnreadMessagesByUser(clientId);
+    return number ?? 0;
+  }
+
+  Future<void> markMessagesAsReadOfUser(String clientId) async {
+    await _database.messageDao.markUnreadAsReadOfUser(clientId);
+  }
 
 }
