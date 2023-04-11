@@ -13,11 +13,12 @@ class _AbsMessage {
   late String time;
   late String recipientClientId;
   late String author;
+  late bool isUnread;
 }
 
 extension MessageUtils on Message {
   DatabaseMessage toDatabaseModel() {
-    return DatabaseMessage(content: content, author: author, timestamp: time, recipientClientId: recipientClientId);
+    return DatabaseMessage(content: content, author: author, timestamp: time, recipientClientId: recipientClientId, isUnread: isUnread);
   }
 
   NetworkMessage toNetworkModel(Event event) {
