@@ -1,5 +1,4 @@
 import 'package:c_hat/model/user/user.dart';
-import 'package:c_hat/ui/shared/chat_bloc/chat_widget_bloc.dart';
 import 'package:c_hat/ui/shared/user_list_bloc/user_list_bloc.dart';
 import 'package:c_hat/ui/shared/user_list_bloc/user_list_event.dart';
 import 'package:flutter/cupertino.dart';
@@ -11,14 +10,12 @@ import 'package:c_hat/ui/mobile/user_list/user_list_element.dart';
 class UserListRoute extends StatefulWidget {
   final UserListBloc listBloc = UserListBloc();
   final User loggedInUser;
-  final ChatWidgetBloc bloc;
   final Platform platform;
 
   final _clientIdController = TextEditingController();
   final _nameController = TextEditingController();
 
-  UserListRoute(this.platform, this.bloc,
-      {required this.loggedInUser, Key? key})
+  UserListRoute(this.platform, {required this.loggedInUser, Key? key})
       : super(key: key);
 
   @override
@@ -37,21 +34,16 @@ class _UserListRouteState extends State<UserListRoute> {
         middle: Text("Friends and Groups"),
       ),
       body: BlocProvider<UserListBloc>.value(
-        value: widget.listBloc,
+        value: widget.listBloc..add(AllUsersRequestedFromDatabaseEvent()),
         child: BlocBuilder<UserListBloc, List<User>>(
-            builder: (blocContext, state) {
-              blocContext.read<UserListBloc>().add(AllUsersRequestedFromDatabaseEvent());
-              return ListView.builder(
-                itemCount: state.length,
-                itemBuilder: (context, index) {
-                  return UserListElement(
-                    widget.platform,
-                    widget.bloc,
-                    user: state[index],
-                  );
-                },
-              );
-            }),
+            builder: (blocContext, userState) {
+          return ListView.builder(
+            itemCount: userState.length,
+            itemBuilder: (context, index) {
+              return UserListElement(widget.platform, user: userState[index]);
+            },
+          );
+        }),
       ),
       actionButton: FloatingActionButton(
         child: const Icon(Icons.message),
