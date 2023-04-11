@@ -35,3 +35,9 @@ class LatestMessageReceived extends ChatState {
   final Message message;
   LatestMessageReceived(this.message);
 }
+
+class NumberOfUnreadMessagesReceived extends ChatState {
+  final int numberOfUnreadMessages;
+  final String clientId;
+  NumberOfUnreadMessagesReceived({required this.numberOfUnreadMessages, required this.clientId});
+}

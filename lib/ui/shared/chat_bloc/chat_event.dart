@@ -38,4 +38,13 @@ class LoginCompletedEvent extends ChatEvent {
   LoginCompletedEvent({required this.password, required this.mailId, required this.wsUrl});
 }
 
+class NumberOfUnreadMessagesRequestedEvent extends ChatEvent {
+  final String clientId;
+  NumberOfUnreadMessagesRequestedEvent(this.clientId);
+}
+
+class MarkMessagesAsReadOfUserEvent extends ChatEvent {
+  final String clientId;
+  MarkMessagesAsReadOfUserEvent(this.clientId);
+}
 

@@ -4,13 +4,13 @@ import 'package:c_hat/model/user/user.dart';
 import 'package:c_hat/network/login_network_user/login_network_user.dart';
 import 'package:c_hat/network/websocket_client/chat_websocket_client.dart';
 import 'package:c_hat/repository/login_repository.dart';
-import 'package:c_hat/ui/shared/chat_bloc/chat_widget_event.dart';
-import 'package:c_hat/ui/shared/chat_bloc/chat_widget_state.dart';
+import 'package:c_hat/ui/shared/chat_bloc/chat_event.dart';
+import 'package:c_hat/ui/shared/chat_bloc/chat_state.dart';
 import 'package:c_hat/repository/message_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class ChatWidgetBloc extends Bloc<ChatEvent, ChatState> {
+class ChatBloc extends Bloc<ChatEvent, ChatState> {
   ChatState value;
   late User loggedInUser;
 
@@ -18,7 +18,7 @@ class ChatWidgetBloc extends Bloc<ChatEvent, ChatState> {
   late LoginRepository _loginRepository;
   late ChatWebsocketClient _wsClient;
 
-  ChatWidgetBloc({required this.value}) : super(value) {
+  ChatBloc({required this.value}) : super(value) {
     on<InitiateConnectionEvent>((event, emit) async {
       _wsClient = ChatWebsocketClient(wsUrl: event.wsUrl);
       _loginRepository = LoginRepository(_wsClient);
@@ -58,6 +58,7 @@ class ChatWidgetBloc extends Bloc<ChatEvent, ChatState> {
     });
 
     on<MessageReceivedEvent>((event, emit) {
+      add(NumberOfUnreadMessagesRequestedEvent(event.message.author));
       emit(MessageReceivedState(event.message));
     });
 
@@ -68,7 +69,17 @@ class ChatWidgetBloc extends Bloc<ChatEvent, ChatState> {
 
     on<MessagesRequestedEvent>((event, emit) async {
       final messages = await _messageRepository.getMessagesByUserClientId(event.clientId);
+      add(NumberOfUnreadMessagesRequestedEvent(event.clientId));
       emit(MessagesReceivedFromDatabase(messages));
+    });
+
+    on<NumberOfUnreadMessagesRequestedEvent>((event, emit) async {
+      final number = await _messageRepository.getNumberOfUnreadMessagesByUser(event.clientId);
+      emit(NumberOfUnreadMessagesReceived(numberOfUnreadMessages: number, clientId: event.clientId));
+    });
+
+    on<MarkMessagesAsReadOfUserEvent>((event, emit) async {
+      await _messageRepository.markMessagesAsReadOfUser(event.clientId);
     });
 
   }
