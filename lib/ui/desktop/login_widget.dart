@@ -49,6 +49,7 @@ class LoginRoute extends StatelessWidget {
                       padding: const EdgeInsets.all(8.0),
                       child: PlatformButton(
                         platform,
+                        minimumWidth: 19,
                         onPressed: () {
                           exit(0);
                         },
@@ -58,7 +59,9 @@ class LoginRoute extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: PlatformFilledButton(
+                        
                         platform,
+                        minimumWidth: 19,
                         onPressed: () {},
                         child: const Text("Login"),
                       ),
