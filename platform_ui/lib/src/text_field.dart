@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart' as material;
 import 'package:flutter/cupertino.dart' as cupertino;
 import 'package:fluent_ui/fluent_ui.dart' as fluent;
+import 'package:flutter/widgets.dart';
 import 'platform_widget.dart';
 import 'platform.dart';
 
@@ -10,6 +11,7 @@ class PlatformTextField extends PlatformWidget {
   final material.TextEditingController controller;
   final bool isPassword;
   final void Function(String)? onChanged;
+  final String? errorText;
 
   const PlatformTextField(super.platform,
       {required this.hint,
@@ -17,7 +19,8 @@ class PlatformTextField extends PlatformWidget {
       required this.controller,
       material.Key? key,
       this.isPassword = false,
-      this.onChanged})
+      this.onChanged,
+      this.errorText = null})
       : super(key: key);
 
   @override
@@ -31,10 +34,17 @@ class PlatformTextField extends PlatformWidget {
           child: material.TextField(
             controller: controller,
             decoration: material.InputDecoration(
-                border: const material.OutlineInputBorder(),
-                label: material.Text(hint)),
+              filled: true,
+              fillColor: material.Theme.of(context).colorScheme.secondaryContainer,
+              errorText: errorText,
+              border: material.OutlineInputBorder(
+                borderRadius: BorderRadius.all(Radius.circular(32))
+              ),
+                
+              label: material.Text(hint)),
             obscureText: isPassword,
             onChanged: onChanged,
+          
           ),
         );
 

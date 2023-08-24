@@ -11,9 +11,9 @@ class HeadingText extends StatelessWidget {
     return Text(
       text,
       textAlign: TextAlign.center,
-      style: const TextStyle(
+      style: TextStyle(
         fontWeight: FontWeight.w900,
-        color: Colors.green,
+        color: Theme.of(context).colorScheme.primary,
         fontSize: 32
       )
     );

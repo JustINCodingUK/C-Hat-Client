@@ -8,8 +8,9 @@ class PlatformButton extends PlatformWidget {
   
   final void Function()? onPressed;
   final material.Widget child;
+  final double minimumWidth;
 
-  const PlatformButton(super.platform, {material.Key? key, required this.child, required this.onPressed}) : super(key: key);
+  const PlatformButton(super.platform, {material.Key? key, required this.child, required this.onPressed, required this.minimumWidth}) : super(key: key);
 
   @override
   material.Widget build(material.BuildContext context) {
@@ -17,7 +18,10 @@ class PlatformButton extends PlatformWidget {
       case Platform.android:
       case Platform.linux:
       case Platform.web:
-        return material.TextButton(onPressed: onPressed, child: child);
+        return material.TextButton(
+          onPressed: onPressed, 
+          child: child,
+        );
 
       case Platform.windows: 
         return fluent.TextButton(onPressed: onPressed, child: child);
@@ -33,7 +37,7 @@ class PlatformFilledButton extends PlatformButton {
 
   final material.OutlinedBorder? shape;
 
-  const PlatformFilledButton(super.platform, {material.Key? key, required super.child, required super.onPressed, this.shape}) : super(key: key);
+  const PlatformFilledButton(super.platform, {material.Key? key, required super.minimumWidth, required super.child, required super.onPressed, this.shape}) : super(key: key);
 
   @override
   material.Widget build(material.BuildContext context) {
@@ -45,6 +49,7 @@ class PlatformFilledButton extends PlatformButton {
           style: material.ElevatedButton.styleFrom(
             backgroundColor: material.Theme.of(context).colorScheme.primary,
             foregroundColor: material.Theme.of(context).colorScheme.onPrimary,
+            minimumSize: material.Size(minimumWidth, 40)
           ),
           onPressed: onPressed, 
           child: child

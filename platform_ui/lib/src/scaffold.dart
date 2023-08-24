@@ -6,11 +6,13 @@ import 'platform_widget.dart';
 class PlatformScaffold extends PlatformWidget {
 
   final material.Widget body;
-  final material.AppBar appBar;
-  final cupertino.CupertinoNavigationBar cupertinoBar;
-  final material.FloatingActionButton? actionButton;
+  final material.AppBar? appBar;
+  final cupertino.CupertinoNavigationBar? cupertinoBar;
+  final material.Widget? actionButton;
+  final material.Widget? bottomNavigationBar;
+  final material.FloatingActionButtonLocation? fabLocation;
 
-  const PlatformScaffold(super.platform, {material.Key? key, this.actionButton, required this.appBar, required this.cupertinoBar, required this.body}) : super(key: key);
+  const PlatformScaffold(super.platform, {material.Key? key, this.actionButton, this.appBar, this.cupertinoBar, required this.body, this.bottomNavigationBar = null, this.fabLocation = null}) : super(key: key);
 
   @override
   material.Widget build(material.BuildContext context) {
@@ -24,6 +26,8 @@ class PlatformScaffold extends PlatformWidget {
           appBar: appBar,
           body: body,
           floatingActionButton: actionButton,
+          bottomNavigationBar: bottomNavigationBar,
+          floatingActionButtonLocation: fabLocation,
         );
 
       case Platform.ios:
