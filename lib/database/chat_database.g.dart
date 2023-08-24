@@ -10,14 +10,12 @@ part of 'chat_database.dart';
 class $FloorChatDatabase {
   /// Creates a database builder for a persistent database.
   /// Once a database is built, you should keep a reference to it and re-use it.
-  // ignore: library_private_types_in_public_api
   static _$ChatDatabaseBuilder databaseBuilder(String name) =>
       _$ChatDatabaseBuilder(name);
 
   /// Creates a database builder for an in memory database.
   /// Information stored in an in memory database disappears when the process is killed.
   /// Once a database is built, you should keep a reference to it and re-use it.
-  // ignore: library_private_types_in_public_api
   static _$ChatDatabaseBuilder inMemoryDatabaseBuilder() =>
       _$ChatDatabaseBuilder(null);
 }
@@ -192,6 +190,16 @@ class _$MessageDao extends MessageDao {
     await _queryAdapter.queryNoReturn(
         'UPDATE messages SET isUnread = FALSE WHERE isUnread = TRUE AND recipientClientId = ?1',
         arguments: [clientId]);
+  }
+
+  @override
+  Future<void> deleteMessages() async {
+    await _queryAdapter.queryNoReturn('DROP TABLE messages');
+  }
+
+  @override
+  Future<void> deleteUsers() async {
+    await _queryAdapter.queryNoReturn('DROP TABLE users');
   }
 
   @override
