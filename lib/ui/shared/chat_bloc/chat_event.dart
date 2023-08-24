@@ -48,3 +48,5 @@ class MarkMessagesAsReadOfUserEvent extends ChatEvent {
   MarkMessagesAsReadOfUserEvent(this.clientId);
 }
 
+class LogoutEvent extends ChatEvent {}
+
