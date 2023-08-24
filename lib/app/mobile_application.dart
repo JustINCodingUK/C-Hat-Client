@@ -1,6 +1,7 @@
 import 'package:c_hat/app/bloc/app_bloc.dart';
 import 'package:c_hat/app/bloc/app_event.dart';
 import 'package:c_hat/app/bloc/app_state.dart';
+import 'package:c_hat/ui/mobile/splash_screen.dart';
 import 'package:c_hat/ui/mobile/user_list/user_list_widget.dart';
 import 'package:c_hat/ui/shared/chat_bloc/chat_bloc.dart';
 import 'package:c_hat/ui/shared/chat_bloc/chat_event.dart';
@@ -49,9 +50,7 @@ class MobileApplication extends StatelessWidget {
     return BlocBuilder<AppBloc, AppState>(
       builder: ((context, state) {
         if (state is LoginCheckAwaits) {
-          return const Center(
-            child: CircularProgressIndicator(),
-          );
+          return const SplashScreen();
         } else if (state is UserIsLoggedIn) {
           context.read<ChatBloc>()
             .add(InitiateConnectionEvent(
@@ -68,7 +67,7 @@ class MobileApplication extends StatelessWidget {
                 return UserListRoute(platform,
                     loggedInUser: state.user);
               } else {
-                return const Center(child: CircularProgressIndicator());
+                return const SplashScreen();
               }
             }),
           );
