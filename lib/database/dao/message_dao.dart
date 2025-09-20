@@ -25,4 +25,10 @@ abstract class MessageDao {
   @Query("UPDATE messages SET isUnread = FALSE WHERE isUnread = TRUE AND recipientClientId = :clientId")
   Future<void> markUnreadAsReadOfUser(String clientId);
 
+  @Query("DROP TABLE messages")
+  Future<void> deleteMessages();
+
+  @Query("DROP TABLE users")
+  Future<void> deleteUsers();
+
 }

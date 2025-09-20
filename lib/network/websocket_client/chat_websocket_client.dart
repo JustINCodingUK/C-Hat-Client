@@ -20,7 +20,7 @@ class ChatWebsocketClient extends WebsocketClient {
   late final _broadcastStream = channel.stream.asBroadcastStream();
 
   ChatWebsocketClient({required this.wsUrl}) {
-    channel = WebSocketChannel.connect(Uri.parse("wss://$wsUrl/chat"));
+    channel = WebSocketChannel.connect(Uri.parse("$wsUrl/chat"));
   }
 
   Future<LoginNetworkUser> login(LoginNetworkUser user) {
@@ -29,6 +29,7 @@ class ChatWebsocketClient extends WebsocketClient {
 
     channel.sink.add(user.toJson());
     _broadcastStream.listen((event) {
+          
           final jsonData = jsonDecode(event);
           if(mapToEvent(jsonData["event"]) == Event.auth) {
             if(mapToStatus(jsonData["status"]) == Status.error) {
@@ -53,6 +54,7 @@ class ChatWebsocketClient extends WebsocketClient {
   void onMessageReceive(void Function(NetworkMessage message) onReceiveCallback) {
     _broadcastStream.listen((event) { 
         final jsonData = jsonDecode(event);
+        
         if(mapToEvent(jsonData["event"]) == Event.message) {
           onReceiveCallback(NetworkMessage.fromJson(jsonData));
         }

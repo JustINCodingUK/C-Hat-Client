@@ -61,4 +61,9 @@ class MessageRepository {
     await _database.messageDao.markUnreadAsReadOfUser(clientId);
   }
 
+  Future<void> deleteData() async {
+    await _database.messageDao.deleteMessages();
+    await _database.messageDao.deleteUsers();
+  }
+
 }

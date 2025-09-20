@@ -44,7 +44,9 @@ class VerifyWidget extends StatelessWidget {
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: PlatformButton(
+                        
                         platform,
+                        minimumWidth: 10,
                         onPressed: () {},
                         child: const Text("Back"),
                       ),
@@ -85,7 +87,9 @@ class VerifyWidget extends StatelessWidget {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: PlatformFilledButton(
+                        
                           platform,
+                          minimumWidth: 256,
                           onPressed: () {
                             bloc.add(OtpSendEvent(
                                 int.parse(_verificationCodeController.text)));

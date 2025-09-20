@@ -24,9 +24,11 @@ class ChatWidget extends StatefulWidget {
 
 class _ChatWidgetState extends State<ChatWidget> {
   List<Message> messages = [];
+  bool areMessagesMarkedUnread = false;
 
   @override
   Widget build(BuildContext context) {
+
     return PlatformScaffold(widget.platform,
         appBar: AppBar(
           title: Text(widget.recipient.username),
@@ -34,25 +36,24 @@ class _ChatWidgetState extends State<ChatWidget> {
         cupertinoBar: CupertinoNavigationBar(
           middle: Text(widget.recipient.username),
         ),
-        body: BlocBuilder<ChatBloc, ChatState>(
-            buildWhen: (previous, current) {
-              return current is MessagesReceivedFromDatabase ||
+        body: BlocBuilder<ChatBloc, ChatState>(buildWhen: (previous, current) {
+          return current is MessagesReceivedFromDatabase ||
               current is MessageReceivedState ||
               current is LatestMessageReceived;
-            },
-            builder: ((context, state) {
-          if(state is MessagesReceivedFromDatabase) {
+        }, builder: ((context, state) {
+          if (state is MessagesReceivedFromDatabase) {
             messages = state.messages;
+            context.read<ChatBloc>().add(MarkMessagesAsReadOfUserEvent(widget.recipient.clientId));
           }
 
-          if(state is MessageReceivedState) {
+          if (state is MessageReceivedState) {
             messages.add(state.message);
           }
 
-          if(state is LatestMessageReceived) {
+          if (state is LatestMessageReceived) {
             messages.add(state.message);
           }
-    
+        
           return Column(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -60,25 +61,42 @@ class _ChatWidgetState extends State<ChatWidget> {
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: ListView.builder(
-                    reverse: true,
-                    scrollDirection: Axis.vertical,
-                    shrinkWrap: true,
-                    itemCount: messages.length,
-                    itemBuilder: (context, index) {
+                      reverse: true,
+                      scrollDirection: Axis.vertical,
+                      shrinkWrap: true,
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final loggedInUser =
+                            context.read<ChatBloc>().loggedInUser;
 
-                      String messageUsername;
-                      if(context.read<ChatBloc>().loggedInUser.clientId == messages.reversed.toList()[index].author) {
-                        messageUsername = context.read<ChatBloc>().loggedInUser.username;
-                      } else {
-                        messageUsername = widget.recipient.username;
-                      }
+                        final listSize = messages.length;
+                        final content = messages.reversed.toList();
 
-                      return ChatMessageWidget(
-                        message: messages.reversed.toList()[index],
-                        username: messageUsername,
-                      );
-                    },
-                  ),
+                        if (!areMessagesMarkedUnread) {
+                          if (content[index].isUnread) {
+                            if (index + 1 != listSize) {
+                              if (!content[index + 1].isUnread) {
+                                areMessagesMarkedUnread = true;
+                                return _buildMessageWidget(
+                                    loggedInUser, content[index], true);
+                              } else {
+                                return _buildMessageWidget(
+                                    loggedInUser, content[index], false);
+                              }
+                            } else {
+                              areMessagesMarkedUnread = true;
+                              return _buildMessageWidget(
+                                  loggedInUser, content[index], true);
+                            }
+                          } else {
+                            return _buildMessageWidget(
+                                loggedInUser, content[index], false);
+                          }
+                        } else {
+                          return _buildMessageWidget(
+                              loggedInUser, content[index], false);
+                        }
+                      }),
                 ),
               ),
               Row(
@@ -87,8 +105,7 @@ class _ChatWidgetState extends State<ChatWidget> {
                     child: Padding(
                       padding: const EdgeInsets.all(4.0),
                       child: PlatformTextField(widget.platform,
-                          hint:
-                              "Enter your message for ${widget.recipient}",
+                          hint: "Enter your message for ${widget.recipient}",
                           controller: widget.controller),
                     ),
                   ),
@@ -96,20 +113,22 @@ class _ChatWidgetState extends State<ChatWidget> {
                     padding: const EdgeInsets.all(4.0),
                     child: PlatformFilledButton(
                       widget.platform,
+                      minimumWidth: 20,
                       onPressed: () {
                         var message = Message(
-                            content: widget.controller.text,
-                            author: context.read<ChatBloc>().loggedInUser.clientId,
-                            time: TimeOfDay.fromDateTime(DateTime.now())
-                                .toString()
-                                .replaceAll("TimeOfDay(", "")
-                                .replaceAll(")", ""),
-                            recipientClientId: widget.recipient.clientId,
-                            isUnread: true
-                          );
-                        
+                          content: widget.controller.text,
+                          author:
+                              context.read<ChatBloc>().loggedInUser.clientId,
+                          time: TimeOfDay.fromDateTime(DateTime.now())
+                              .toString()
+                              .replaceAll("TimeOfDay(", "")
+                              .replaceAll(")", ""),
+                          recipientClientId: widget.recipient.clientId,
+                          isUnread: false,
+                        );
+
                         context.read<ChatBloc>().add(MessageSentEvent(message));
-                        widget.controller.text = "";
+                        widget.controller.clear();
                       },
                       child: const Icon(Icons.send),
                     ),
@@ -119,5 +138,22 @@ class _ChatWidgetState extends State<ChatWidget> {
             ],
           );
         })));
+  }
+
+  Widget _buildMessageWidget(
+      User loggedInUser, Message message, bool markUnread) {
+    if (message.author != loggedInUser.clientId) {
+      return SizedBox(
+          child: Align(
+        alignment: Alignment.centerLeft,
+        child: ChatMessageWidget(message: message, markUnread: markUnread),
+      ));
+    } else {
+      return SizedBox(
+          child: Align(
+        alignment: Alignment.centerRight,
+        child: ChatMessageWidget(message: message, markUnread: markUnread),
+      ));
+    }
   }
 }

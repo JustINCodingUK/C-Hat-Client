@@ -82,5 +82,11 @@ class ChatBloc extends Bloc<ChatEvent, ChatState> {
       await _messageRepository.markMessagesAsReadOfUser(event.clientId);
     });
 
+    on<LogoutEvent>((event, emit) async {
+      final sharedPrefs = await SharedPreferences.getInstance();
+      sharedPrefs.clear();
+      _messageRepository.deleteData();
+    });
+
   }
 }

@@ -19,7 +19,7 @@ class RegisterWebsocketClient extends WebsocketClient {
   late final _broadcastStream = channel.stream.asBroadcastStream();
 
   RegisterWebsocketClient({required this.wsUrl}) {
-    channel = WebSocketChannel.connect(Uri.parse("wss://$wsUrl/register"));
+    channel = WebSocketChannel.connect(Uri.parse("$wsUrl/register"));
   }
 
   Future<Status> registerUser(RegisterNetworkUser user) {

@@ -14,12 +14,6 @@ class UserView extends StatelessWidget {
   Widget build(BuildContext context) {
     return PlatformScaffold(
       platform,
-      appBar: AppBar(
-        title: Text(user.username),
-      ),
-      cupertinoBar: CupertinoNavigationBar(
-        middle: Text(user.username),
-      ),
       body: Column(
         children: [
           Center(
@@ -46,7 +40,6 @@ class UserView extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text("Client ID: ${user.clientId}"),
-                  const Text("Last seen:")
                 ],
               ),
             ),
