@@ -1,16 +1,13 @@
-# C-Hat-Client
+# C-Hat Client
 
-A new Flutter project.
+Cross-platform client for the c-hat chatting service. Say no to centralized chats, hello to decentralized servers! The client allows you to login to JUST 1 server of your choice, with unique credentials, leaving no trace of connections between various servers.
 
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Tech Stack
+- Flutter/Dart
+- Backend: [C-Hat Server V2](https://github.com/justincodinguk/c-hat-server-v2)
+- BLoC architecture with repository pattern
+- Websocket clients
+- Custom code generators for data classes
+- Custom library for platform-specific UI 
+- Floor DB for SQLite ORM
+- Custom Auth system with email verification handled by the backend.

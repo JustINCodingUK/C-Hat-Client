@@ -13,11 +13,11 @@ class DesktopApplication extends StatelessWidget {
   Widget build(BuildContext context) {
     if (io.Platform.isWindows) {
       return FluentApp(
-        theme: ThemeData(
+        theme: FluentThemeData(
             brightness: Brightness.light,
             accentColor: Colors.accentColors[7],
             activeColor: lightColorScheme.primary),
-        darkTheme: ThemeData(
+        darkTheme: FluentThemeData(
             brightness: Brightness.dark,
             accentColor: Colors.accentColors[7],
             activeColor: darkColorScheme.primary),

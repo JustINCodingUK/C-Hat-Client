@@ -24,7 +24,7 @@ class PlatformButton extends PlatformWidget {
         );
 
       case Platform.windows: 
-        return fluent.TextButton(onPressed: onPressed, child: child);
+        return fluent.Button(onPressed: onPressed, child: child);
 
       case Platform.ios:
       case Platform.macos:
